@@ -69,7 +69,7 @@ app.get("/turtles", (req, res) => {
 // DELETE
 app.delete("/turtles/:_id", (req, res) => {
   Turtle.findByIdAndDelete(req.params._id, (error, deletedTurtle) => {
-  res.send({ success: true })
+  res.redirect("/turtles");
 });
 });
 
@@ -87,10 +87,10 @@ app.put("/turtles/:_id", (req, res) => {
 
 // Create (POST)
 app.post("/turtles", (req, res) => {
-  Turtle.create(req.params._id, (error, foundTurtle) => {
-    res.send(foundTurtle);
+  Turtle.create(req.body, (error, foundTurtle) => {
+    res.redirect("/turtles");
   }); 
-  });
+});
 
 // Show
 app.get("/turtles/:_id", (req, res) => {
