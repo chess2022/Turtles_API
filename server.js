@@ -52,7 +52,7 @@ app.get("/", (req, res) => {
   //res.json let's us send a response as JSON data
   res.json({
     response: "Hello World",
-    innerVoice: "I need a nap",
+    innerCheryl: "I need a nap",
     innerEleanor: "What the fork",
   });
 });
@@ -67,37 +67,37 @@ app.get("/turtles", (req, res) => {
 })
 
 // DELETE
-app.delete("/turtles/:index", (req, res) => {
-  Turtle.findByIdAndDelete(req.params.index, (error, deletedTurtle) => {
+app.delete("/turtles/:_id", (req, res) => {
+  Turtle.findByIdAndDelete(req.params._id, (error, deletedTurtle) => {
   res.send({ success: true })
 });
 });
 
 // Update (PUT)
-app.put("/turtles/:index", (req, res) => {
+app.put("/turtles/:_id", (req, res) => {
   Turtle.findByIdAndUpdate(
-    req.params.index,
+    req.params._id,
     req.body,
     { new: true },
     (error, updatedTurtle) => {
-      res.send(updatedTurtle)
+      res.send(updatedTurtle);
     }
   );
-})
+});
 
 // Create (POST)
 app.post("/turtles", (req, res) => {
-  Turtle.create(req.params.id, (error, foundTurtle) => {
-    res.send(foundTurtle)
-    }); 
+  Turtle.create(req.params._id, (error, foundTurtle) => {
+    res.send(foundTurtle);
+  }); 
   });
 
 // Show
-app.get("/turtles/:index", (req, res) => {
-  Turtle.findById(req.params.id, (error, foundTurtle) => { 
-    res.send(foundTurtle)}
-    )
+app.get("/turtles/:_id", (req, res) => {
+  Turtle.findById(req.params._id, (error, foundTurtle) => {
+    res.send(foundTurtle);
   });
+});
 
 // why don't we have new and edit routes?
 // because it's 'get' routes that render html pages so we don't need it for crud (create read update delete)
