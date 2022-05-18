@@ -6,26 +6,12 @@ require("dotenv").config();
 const express = require("express");
 const DATABASE_URL = process.env.DATABASE_URL
 const Turtle = require("./models/turtles.js")
+const PORT = process.env.PORT || 3001
 
 /////////////////////////
 // The Application Object
 /////////////////////////
 const app = express();
-
-const turtles = [
-  { name: "Leonardo", role: "ninja" },
-  { name: "Michaelangelo", role: "ninja" },
-  { name: "Donatello", role: "ninja" },
-  { name: "Raphael", role: "ninja" },
-  { name: "Franklin", role: "student" },
-  { name: "Master Oogway", role: "Sensei" },
-  { name: "Crush", role: "Nemo's ride" },
-  { name: "Koopa Troopa", role: "Mario's Foe" },
-  { name: "Bowser", role: "King of evil Mario Turtles" },
-  { name: "Squirtle", role: "OG starter pokemon" },
-  { name: "Pistachio Disguisey", role: "Master of Disguise" },
-  { name: "Morla", role: "The Ancient One" },
-];
 
 /////////////////////////
 // Mongoose config
@@ -49,6 +35,17 @@ app.use(express.urlencoded({extended: false}))
 // Routes
 /////////////////////////
 
+
+// SEED 
+const turtleSeed = require("./models/seed");
+const res = require("express/lib/response");
+app.get("/turtles/seed", (req, res) => {
+  Turtle.deleteMany({}, (error, allTurtles) => {});
+  Turtle.create(turtleSeed, (error, data) => {
+    res.redirect("/turtles");
+  })
+})
+
 // home route that says "hello world" to test server is working
 // req , res are arguments of the callback
 app.get("/", (req, res) => {
@@ -56,35 +53,47 @@ app.get("/", (req, res) => {
   res.json({
     response: "Hello World",
     innerVoice: "I need a nap",
-    innerEleanor: "What the fuck",
+    innerEleanor: "What the fork",
   });
 });
 
 // INDUCES - index new delete update create edit show
 
 // Index
-app.get("/turtles", (req, res) => res.json(turtles));
+app.get("/turtles", (req, res) => {
+    Turtle.find({}, (error, allTurtles) => {
+      res.send(allTurtles)
+    })
+})
 
 // DELETE
 app.delete("/turtles/:index", (req, res) => {
-  turtles.splice(req.params.index, 1);
-  res.json(turtles);
+  Turtle.findByIdAndDelete(req.params.index, (error, deletedTurtle) => {
+  res.send({ success: true })
+});
 });
 
 // Update (PUT)
 app.put("/turtles/:index", (req, res) => {
-  turtles[req.params.index] = req.body;
-  res.json(turtles);
-});
+  Turtle.findByIdAndUpdate(
+    req.params.index,
+    req.body,
+    { new: true },
+    (error, updatedTurtle) => {
+      res.send(updatedTurtle)
+    }
+  );
+})
 
 // Create (POST)
 app.post("/turtles", (req, res) => {
-  turtles.push(req.body); // add turtle to the array
-  res.json(turtles); // send whole thing back to confirm
+  Turtle.create(req.params.id, (error, foundTurtle) => {
+  res.send(foundTurtle)
+}); 
 });
 
 // Show
-app.get("/turtles/:index", (req, res) => res.json(turtles[req.params.index]));
+// app.get("/turtles/:index", (req, res) => res.json(turtles[req.params.index]));
 
 // why don't we have new and edit routes?
 // because it's 'get' routes that render html pages so we don't need it for crud (create read update delete)
@@ -95,4 +104,4 @@ app.get("/turtles/:index", (req, res) => res.json(turtles[req.params.index]));
 // We chose a non 3000 port because react dev server uses 3000 the highest possible port is 65535
 // Why? cause it's the largest 16-bit integer, fun fact!
 // But because we are "elite" coders we will use 1337
-app.listen(1337, () => console.log("Listening on port 1337"));
+app.listen(PORT, () => console.log(`express is listening on port: ${PORT}`));
