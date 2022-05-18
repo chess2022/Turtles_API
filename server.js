@@ -88,12 +88,16 @@ app.put("/turtles/:index", (req, res) => {
 // Create (POST)
 app.post("/turtles", (req, res) => {
   Turtle.create(req.params.id, (error, foundTurtle) => {
-  res.send(foundTurtle)
-}); 
-});
+    res.send(foundTurtle)
+    }); 
+  });
 
 // Show
-// app.get("/turtles/:index", (req, res) => res.json(turtles[req.params.index]));
+app.get("/turtles/:index", (req, res) => {
+  Turtle.findById(req.params.id, (error, foundTurtle) => { 
+    res.send(foundTurtle)}
+    )
+  });
 
 // why don't we have new and edit routes?
 // because it's 'get' routes that render html pages so we don't need it for crud (create read update delete)
